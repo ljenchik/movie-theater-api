@@ -1,5 +1,6 @@
 const { Show } = require("./../models");
 const { validationResult } = require("express-validator");
+const { Op } = require("sequelize");
 module.exports = {
     allShows: async (req, res, next) => {
         try {
@@ -20,11 +21,12 @@ module.exports = {
     },
     showsByGenre: async (req, res, next) => {
         try {
-            const genre = req.params.genre;
+            const genre = req.params.genre.toLowerCase();
             const showsWithGenre = await Show.findAll({
                 where: { genre: genre },
             });
             res.json(showsWithGenre);
+            res.json(genre);
         } catch (error) {
             next(error);
         }
@@ -74,4 +76,4 @@ module.exports = {
     },
 };
 
-// TO do: Insensitive search
+// To do: space and - for Science Fiction
