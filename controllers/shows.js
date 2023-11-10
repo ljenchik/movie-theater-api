@@ -1,9 +1,20 @@
-const { Show } = require("./../models");
+const { Show, watched } = require("./../models");
 const { validationResult } = require("express-validator");
+const { db } = require("../db/connection");
+const { QueryTypes } = require("sequelize");
+
 module.exports = {
     allShows: async (req, res, next) => {
         try {
-            const shows = await Show.findAll();
+            let query = `select shows.*, v.rating 
+                        from shows
+                        left join (
+                            select showid, avg(rating) rating from userShowRatings
+                            group by showid
+                        ) v on v.showid = shows.id`;
+            const shows = await db.query(query, {
+                type: QueryTypes.SELECT,
+            });
             res.json(shows);
         } catch (error) {
             next(error);
@@ -12,7 +23,7 @@ module.exports = {
     showById: async (req, res, next) => {
         try {
             const { id } = req.params;
-            const show = await Show.findByPk(id);
+            const show = await Show.findByPk(id, { include: watched });
             res.json(show);
         } catch (error) {
             next(error);

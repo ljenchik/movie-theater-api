@@ -1,4 +1,4 @@
-const { User, Show } = require("./../models");
+const { User, Show, UserShowRating } = require("./../models");
 module.exports = {
     allUsers: async (req, res, next) => {
         try {
@@ -11,7 +11,7 @@ module.exports = {
     userById: async (req, res, next) => {
         try {
             const { id } = req.params;
-            const user = await User.findByPk(id);
+            const user = await User.findByPk(id, { include: Show });
             res.json(user);
         } catch (error) {
             next(error);
@@ -21,7 +21,7 @@ module.exports = {
         try {
             const { id } = req.params;
             const user = await User.findByPk(id, { include: Show });
-            res.json(user);
+            res.json(await user.getShows());
         } catch (error) {
             next(error);
         }
@@ -29,14 +29,22 @@ module.exports = {
     userUpdatedShows: async (req, res, next) => {
         try {
             const { id, showId } = req.params;
-            const user = await User.findByPk(id, { include: Show });
-            const show = await Show.findByPk(showId);
-            const userRating = req.body.rating;
-            await show.update(req.body);
-            await user.addShows(show);
-            const userWithShows = await User.findByPk(id, { include: Show });
-            res.json(userWithShows);
+            const userShowRating = await UserShowRating.findOne({
+                where: { userId: id, showId: showId },
+            });
+            if (userShowRating === null) {
+                UserShowRating.create({
+                    userId: id,
+                    showId: showId,
+                    rating: req.body.rating,
+                });
+            } else {
+                await userShowRating.update(req.body.rating);
+                const user = await User.findByPk(id, { include: Show });
+                res.json(user);
+            }
         } catch (error) {
+            console.log(error);
             next(error);
         }
     },
