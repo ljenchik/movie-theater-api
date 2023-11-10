@@ -18,9 +18,9 @@ module.exports = {
             next(error);
         }
     },
-    showsByGenre: async (req, res) => {
+    showsByGenre: async (req, res, next) => {
         try {
-            const { genre } = req.params;
+            const genre = req.params.genre;
             const showsWithGenre = await Show.findAll({
                 where: { genre: genre },
             });
@@ -45,7 +45,7 @@ module.exports = {
             }
         }
     },
-    updateShowAvailable: async (req, res, next) => {
+    updateShowStatus: async (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             res.json({ error: errors.array() });

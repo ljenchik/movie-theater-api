@@ -9,14 +9,14 @@ showsRouter.get("/", showsController.allShows);
 showsRouter.get("/:id", showsController.showById);
 showsRouter.get("/genre/:genre", showsController.showsByGenre);
 showsRouter.put(
-    "/:id/rating",
+    "/:id/watched",
     updateRatingValidation,
     showsController.updateShowRating
 );
 showsRouter.put(
-    "/:id/available",
+    "/:id/updates",
     updateAvailabilityValidation,
-    showsController.updateShowAvailable
+    showsController.updateShowStatus
 );
 showsRouter.delete("/:id", showsController.deleteShowById);
 

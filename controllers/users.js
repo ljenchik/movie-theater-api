@@ -8,7 +8,7 @@ module.exports = {
             next(error);
         }
     },
-    userWithId: async (req, res, next) => {
+    userById: async (req, res, next) => {
         try {
             const { id } = req.params;
             const user = await User.findByPk(id);
@@ -17,7 +17,7 @@ module.exports = {
             next(error);
         }
     },
-    userWithShows: async (req, res, next) => {
+    userShows: async (req, res, next) => {
         try {
             const { id } = req.params;
             const user = await User.findByPk(id, { include: Show });
@@ -26,14 +26,13 @@ module.exports = {
             next(error);
         }
     },
-    userWithUpdatedShows: async (req, res, next) => {
+    userUpdatedShows: async (req, res, next) => {
         try {
-            const { id } = req.params;
-            const user = await User.findByPk(id);
-            const show = await Show.create(req.body);
+            const { id, showId } = req.params;
+            const user = await User.findByPk(id, { include: Show });
+            const show = await Show.findByPk(showId);
             await user.addShows(show);
-            const updatedUser = await User.findByPk(id, { include: Show });
-            res.json(updatedUser);
+            res.json(user);
         } catch (error) {
             next(error);
         }
