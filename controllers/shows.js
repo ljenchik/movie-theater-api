@@ -1,6 +1,5 @@
 const { Show } = require("./../models");
 const { validationResult } = require("express-validator");
-const { Op } = require("sequelize");
 module.exports = {
     allShows: async (req, res, next) => {
         try {
