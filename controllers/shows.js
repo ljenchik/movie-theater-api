@@ -1,4 +1,5 @@
-const { User, Show } = require("./../models");
+const { Show } = require("./../models");
+const { validationResult } = require("express-validator");
 module.exports = {
     allShows: async (req, res, next) => {
         try {
@@ -29,25 +30,35 @@ module.exports = {
         }
     },
     updateShowRating: async (req, res, next) => {
-        try {
-            const { id } = req.params;
-            const show = await Show.findByPk(id);
-            await show.update(req.body);
-            const shows = await Show.findAll();
-            res.json(shows);
-        } catch (error) {
-            next(error);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.json({ error: errors.array() });
+        } else {
+            try {
+                const { id } = req.params;
+                const show = await Show.findByPk(id);
+                await show.update(req.body);
+                const shows = await Show.findAll();
+                res.json(shows);
+            } catch (error) {
+                next(error);
+            }
         }
     },
     updateShowAvailable: async (req, res, next) => {
-        try {
-            const { id } = req.params;
-            const show = await Show.findByPk(id);
-            await show.update(req.body);
-            const shows = await Show.findAll();
-            res.json(shows);
-        } catch (error) {
-            next(error);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.json({ error: errors.array() });
+        } else {
+            try {
+                const { id } = req.params;
+                const show = await Show.findByPk(id);
+                await show.update(req.body);
+                const shows = await Show.findAll();
+                res.json(shows);
+            } catch (error) {
+                next(error);
+            }
         }
     },
     deleteShowById: async (req, res, next) => {
